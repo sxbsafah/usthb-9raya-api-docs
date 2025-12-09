@@ -1,6 +1,6 @@
 ---
 title: Faculties Routes
-description: CRUD endpoints for faculties with validations.
+description: CRUD endpoints with JSON bodies and validations.
 ---
 
 # Faculties
@@ -13,55 +13,68 @@ description: CRUD endpoints for faculties with validations.
 - Request: none
 - Validation: none
 - Success: `200` list of faculties
-- Errors: `500` unexpected server errors
+- Errors: `500` server errors
 
 ## GET `/:id`
 
 - Auth: None
-- Request Params: `{ id }`
+- Params:
+
+```json
+{
+  "id": "<facultyId>"
+}
+```
+
 - Validation:
-  - `id`: MongoId, must exist in DB
+  - `id`: MongoId, must exist
 - Success: `200` faculty
-- Errors:
-  - `400` validation errors
-  - `404` not found
-  - `500` unexpected server errors
+- Errors: `400` validation, `404` not found, `500`
 
 ## POST `/`
 
 - Auth: `authenticate("admin")`
-- Request Body (JSON): `{ name }`
+- Request Body (JSON):
+
+```json
+{
+  "name": "Computer Science"
+}
+```
+
 - Validation:
   - `name`: string, required, length 2–100, unique
-- Success: `201` created faculty
-- Errors:
-  - `400` validation errors
-  - `401`/`403` unauthorized
-  - `409` name already in use
-  - `500` unexpected server errors
+- Success: `201` created
+- Errors: `400` validation, `401`/`403` unauthorized, `409` conflict, `500`
 
 ## PUT `/:id`
 
 - Auth: `authenticate("admin")`
-- Request Params: `{ id }`
+- Params:
+
+```json
+{
+  "id": "<facultyId>"
+}
+```
+
 - Validation:
-  - `id`: MongoId, must exist in DB
-- Success: `200` updated faculty
-- Errors:
-  - `400` validation errors
-  - `401`/`403` unauthorized
-  - `404` not found
-  - `500` unexpected server errors
+  - `id`: MongoId, must exist
+- Success: `200` updated
+- Errors: `400` validation, `401`/`403`, `404` not found, `500`
 
 ## DELETE `/:id`
 
 - Auth: `authenticate("admin")`
-- Request Params: `{ id }`
+- Params:
+
+```json
+{
+  "id": "<facultyId>"
+}
+```
+
 - Validation:
-  - `id`: MongoId, must exist in DB
-- Success: `200` deleted confirmation
-- Errors:
-  - `400` validation errors
-  - `401`/`403` unauthorized
-  - `404` not found
-  - `500` unexpected server errors
+  - `id`: MongoId, must exist
+- Success: `200` deleted
+- Errors: `400` validation, `401`/`403`, `404` not found, `500`

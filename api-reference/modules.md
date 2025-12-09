@@ -1,6 +1,6 @@
 ---
 title: Modules Routes
-description: CRUD endpoints for modules and listing by faculty.
+description: CRUD endpoints and listing by faculty.
 ---
 
 # Modules
@@ -13,69 +13,86 @@ description: CRUD endpoints for modules and listing by faculty.
 - Request: none
 - Validation: none
 - Success: `200` list of modules
-- Errors: `500` unexpected server errors
+- Errors: `500`
 
 ## GET `/faculty/:facultyId`
 
 - Auth: None
-- Request Params: `{ facultyId }`
+- Params:
+
+```json
+{
+  "facultyId": "<facultyId>"
+}
+```
+
 - Validation:
-  - `facultyId`: MongoId, must exist in DB
+  - `facultyId`: MongoId, must exist
 - Success: `200` modules for faculty
-- Errors:
-  - `400` validation errors
-  - `404` faculty not found
-  - `500` unexpected server errors
+- Errors: `400` validation, `404` not found, `500`
 
 ## GET `/:id`
 
 - Auth: None
-- Request Params: `{ id }`
+- Params:
+
+```json
+{
+  "id": "<moduleId>"
+}
+```
+
 - Validation:
-  - `id`: MongoId, must exist in DB
+  - `id`: MongoId, must exist
 - Success: `200` module
-- Errors:
-  - `400` validation errors
-  - `404` not found
-  - `500` unexpected server errors
+- Errors: `400` validation, `404` not found, `500`
 
 ## POST `/`
 
 - Auth: `authenticate("admin")`
-- Request Body (JSON): `{ name, facultyId }`
+- Request Body (JSON):
+
+```json
+{
+  "name": "Algorithms",
+  "facultyId": "<facultyId>"
+}
+```
+
 - Validation:
   - `name`: string, required, length 2–100, unique
-  - `facultyId`: MongoId, required, must exist in DB
-- Success: `201` created module
-- Errors:
-  - `400` validation errors
-  - `401`/`403` unauthorized
-  - `409` name already in use
-  - `404` faculty not found
-  - `500` unexpected server errors
+  - `facultyId`: MongoId, required, must exist
+- Success: `201` created
+- Errors: `400` validation, `401`/`403`, `404` faculty not found, `409` conflict, `500`
 
 ## PUT `/:id`
 
 - Auth: `authenticate("admin")`
-- Request Params: `{ id }`
+- Params:
+
+```json
+{
+  "id": "<moduleId>"
+}
+```
+
 - Validation:
-  - `id`: MongoId, must exist in DB
-- Success: `200` updated module
-- Errors:
-  - `400` validation errors
-  - `401`/`403` unauthorized
-  - `404` not found
-  - `500` unexpected server errors
+  - `id`: MongoId, must exist
+- Success: `200` updated
+- Errors: `400` validation, `401`/`403`, `404` not found, `500`
 
 ## DELETE `/:id`
 
 - Auth: `authenticate("admin")`
-- Request Params: `{ id }`
+- Params:
+
+```json
+{
+  "id": "<moduleId>"
+}
+```
+
 - Validation:
-  - `id`: MongoId, must exist in DB
-- Success: `200` deleted confirmation
-- Errors:
-  - `400` validation errors
-  - `401`/`403` unauthorized
-  - `404` not found
-  - `500` unexpected server errors
+  - `id`: MongoId, must exist
+- Success: `200` deleted
+- Errors: `400` validation, `401`/`403`, `404` not found, `500`

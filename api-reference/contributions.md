@@ -1,6 +1,6 @@
 ---
 title: Contributions & Resources Routes
-description: Endpoints for contributions and their resources.
+description: Multipart requests highlighted with JSON examples and validations.
 ---
 
 # Contributions
@@ -13,64 +13,105 @@ description: Endpoints for contributions and their resources.
 - Request: none
 - Validation: none
 - Success: `200` list of contributions
-- Errors: `500` unexpected server errors
+- Errors: `500`
 
 ## GET `/my/all`
 
 - Auth: `authenticate("user")`
 - Request: none
 - Validation: token must be valid
-- Success: `200` list of current user's contributions
-- Errors: `401` unauthorized, `500` server errors
+- Success: `200` my contributions
+- Errors: `401`, `500`
 
 ## GET `/pending`
 
 - Auth: `authenticate("admin")`
 - Request: none
-- Validation: token must be valid (admin)
-- Success: `200` list of pending contributions
-- Errors: `401`/`403` unauthorized, `500` server errors
+- Validation: admin token must be valid
+- Success: `200` pending contributions
+- Errors: `401`/`403`, `500`
 
 ## GET `/:id`
 
 - Auth: None
-- Request Params: `{ id }`
-- Validation:
-  - `id`: MongoId, must exist in DB
-- Success: `200` contribution
-- Errors: `400` validation errors, `404` not found, `500` server errors
+- Params:
 
-## POST `/`
+```json
+{
+  "id": "<contributionId>"
+}
+```
+
+- Validation:
+  - `id`: MongoId, must exist
+- Success: `200` contribution
+- Errors: `400`, `404`, `500`
+
+## POST `/` (multipart/form-data)
 
 - Auth: `authenticate("user")`
-- Request: `multipart/form-data`
-  - Fields: `description` (text), `files[]` (up to 10)
+- Content-Type: `multipart/form-data`
+- Fields:
+  - `description` (text)
+  - `files[]` (up to 10)
+- Example (JSON representation of fields):
+
+```json
+{
+  "description": "Lecture notes and slides",
+  "files": ["<binary>", "<binary>"]
+}
+```
+
 - Validation:
   - `description`: string, required, length 10–500
-  - `files`: max 10, each ≤25MB; allowed types: pdf, jpg, jpeg, png
-- Success: `201` contribution created with uploaded resources
-- Errors: `400` validation errors, `401` unauthorized, `413` payload too large, `415` unsupported media type, `500` server errors
+  - `files`: max 10, each ≤25MB; allowed: pdf, jpg, jpeg, png
+- Success: `201` created with resources
+- Errors: `400` validation, `401` unauthorized, `413` too large, `415` unsupported, `500`
 
-## PUT `/:id`
+## PUT `/:id` (multipart/form-data)
 
 - Auth: `authenticate("user")`
-- Request Params: `{ id }`
-- Request: `multipart/form-data`
-  - Fields: optional `files[]` (up to 10)
+- Params:
+
+```json
+{
+  "id": "<contributionId>"
+}
+```
+
+- Content-Type: `multipart/form-data`
+- Fields (optional):
+  - `files[]` (up to 10)
+- Example:
+
+```json
+{
+  "files": ["<binary>"]
+}
+```
+
 - Validation:
-  - `id`: MongoId, must exist in DB
-  - `files`: max 10, each ≤25MB; allowed types: pdf, jpg, jpeg, png
-- Success: `200` contribution updated (resources may be added)
-- Errors: `400` validation errors, `401` unauthorized, `404` not found, `413`/`415`, `500`
+  - `id`: MongoId, must exist
+  - `files`: max 10, each ≤25MB; allowed: pdf, jpg, jpeg, png
+- Success: `200` updated
+- Errors: `400`, `401`, `404`, `413`/`415`, `500`
 
 ## DELETE `/:id`
 
 - Auth: `authenticate("user")`
-- Request Params: `{ id }`
+- Params:
+
+```json
+{
+  "id": "<contributionId>"
+}
+```
+
 - Validation:
-  - `id`: MongoId, must exist in DB
-- Success: `200` contribution deleted
-- Errors: `400` validation errors, `401` unauthorized, `404` not found, `500`
+  - `id`: MongoId, must exist
+- Success: `200` deleted
+- Errors: `400`, `401`, `404`, `500`
 
 # Resources
 
@@ -81,55 +122,99 @@ description: Endpoints for contributions and their resources.
 - Auth: None
 - Request: none
 - Validation: none
-- Success: `200` list of all resources
-- Errors: `500` server errors
+- Success: `200` resources
+- Errors: `500`
 
 ## GET `/user/:userId`
 
 - Auth: None
-- Request Params: `{ userId }`
-- Validation: none (controller filters by user)
-- Success: `200` resources for user
-- Errors: `404` not found, `500` server errors
+- Params:
+
+```json
+{
+  "userId": "<userId>"
+}
+```
+
+- Validation: none
+- Success: `200` resources by user
+- Errors: `404`, `500`
 
 ## GET `/my`
 
 - Auth: `authenticate("user")`
 - Request: none
 - Validation: token must be valid
-- Success: `200` current user's resources
-- Errors: `401` unauthorized, `500` server errors
+- Success: `200` my resources
+- Errors: `401`, `500`
 
 ## GET `/contributions/:id/resources`
 
 - Auth: None
-- Request Params: `{ id }`
-- Validation:
-  - `id`: MongoId, must exist in DB
-- Success: `200` resources for contribution
-- Errors: `400` validation errors, `404` not found, `500`
+- Params:
 
-## PUT `/resource/:resourceId`
+```json
+{
+  "id": "<contributionId>"
+}
+```
+
+- Validation:
+  - `id`: MongoId, must exist
+- Success: `200` resources for contribution
+- Errors: `400`, `404`, `500`
+
+## PUT `/resource/:resourceId` (multipart/form-data)
 
 - Base Path: `/contributions`
 - Auth: `authenticate("user")`
-- Request Params: `{ resourceId }`
-- Request: `multipart/form-data`
-  - Field: `file` (single)
+- Params:
+
+```json
+{
+  "resourceId": "<resourceId>"
+}
+```
+
+- Content-Type: `multipart/form-data`
+- Fields:
+  - `file` (single)
+- Example:
+
+```json
+{
+  "file": "<binary>"
+}
+```
+
 - Validation:
-  - `resourceId`: MongoId, must exist in DB
-  - `file`: ≤25MB; types: pdf, jpg, jpeg, png
-- Success: `200` resource file replaced/updated
-- Errors: `400` validation errors, `401` unauthorized, `404` not found, `413`/`415`, `500`
+  - `resourceId`: MongoId, must exist
+  - `file`: ≤25MB; allowed: pdf, jpg, jpeg, png
+- Success: `200` resource updated
+- Errors: `400`, `401`, `404`, `413`/`415`, `500`
 
 ## PATCH `/resource/:resourceId/status`
 
 - Base Path: `/contributions`
 - Auth: `authenticate("admin")`
-- Request Params: `{ resourceId }`
-- Request Body (JSON): `{ status }`
+- Params:
+
+```json
+{
+  "resourceId": "<resourceId>"
+}
+```
+
+- Request Body (JSON):
+
+```json
+{
+  "status": "approved"
+}
+```
+
 - Validation:
-  - `resourceId`: MongoId, must exist in DB
-  - `status`: string, required, must be `approved` or `rejected`
-- Success: `200` resource status updated
-- Errors: `400` validation errors, `401`/`403` unauthorized, `404` not found, `500`
+  - `resourceId`: MongoId, must exist
+  - `status`: `approved` or `rejected`
+- Success: `200` status updated
+- Errors: `400`, `401`/`403`, `404`, `500`

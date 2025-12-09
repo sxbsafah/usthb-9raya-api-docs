@@ -1,6 +1,6 @@
 ---
 title: SubModules Routes
-description: CRUD endpoints for submodules and listing by module.
+description: CRUD endpoints and listing by module.
 ---
 
 # SubModules
@@ -13,69 +13,86 @@ description: CRUD endpoints for submodules and listing by module.
 - Request: none
 - Validation: none
 - Success: `200` list of submodules
-- Errors: `500` unexpected server errors
+- Errors: `500`
 
 ## GET `/module/:moduleId`
 
 - Auth: None
-- Request Params: `{ moduleId }`
+- Params:
+
+```json
+{
+  "moduleId": "<moduleId>"
+}
+```
+
 - Validation:
-  - `moduleId`: MongoId, must exist in DB
+  - `moduleId`: MongoId, must exist
 - Success: `200` submodules for module
-- Errors:
-  - `400` validation errors
-  - `404` module not found
-  - `500` unexpected server errors
+- Errors: `400` validation, `404` not found, `500`
 
 ## GET `/:id`
 
 - Auth: None
-- Request Params: `{ id }`
+- Params:
+
+```json
+{
+  "id": "<subModuleId>"
+}
+```
+
 - Validation:
-  - `id`: MongoId, must exist in DB
+  - `id`: MongoId, must exist
 - Success: `200` submodule
-- Errors:
-  - `400` validation errors
-  - `404` not found
-  - `500` unexpected server errors
+- Errors: `400` validation, `404` not found, `500`
 
 ## POST `/`
 
 - Auth: `authenticate("admin")`
-- Request Body (JSON): `{ name, moduleId }`
+- Request Body (JSON):
+
+```json
+{
+  "name": "Data Structures",
+  "moduleId": "<moduleId>"
+}
+```
+
 - Validation:
   - `name`: string, required, length 2–100, unique
-  - `moduleId`: MongoId, required, must exist in DB
-- Success: `201` created submodule
-- Errors:
-  - `400` validation errors
-  - `401`/`403` unauthorized
-  - `409` name already in use
-  - `404` module not found
-  - `500` unexpected server errors
+  - `moduleId`: MongoId, required, must exist
+- Success: `201` created
+- Errors: `400` validation, `401`/`403`, `404` module not found, `409` conflict, `500`
 
 ## PUT `/:id`
 
 - Auth: `authenticate("admin")`
-- Request Params: `{ id }`
+- Params:
+
+```json
+{
+  "id": "<subModuleId>"
+}
+```
+
 - Validation:
-  - `id`: MongoId, must exist in DB
-- Success: `200` updated submodule
-- Errors:
-  - `400` validation errors
-  - `401`/`403` unauthorized
-  - `404` not found
-  - `500` unexpected server errors
+  - `id`: MongoId, must exist
+- Success: `200` updated
+- Errors: `400` validation, `401`/`403`, `404` not found, `500`
 
 ## DELETE `/:id`
 
 - Auth: `authenticate("admin")`
-- Request Params: `{ id }`
+- Params:
+
+```json
+{
+  "id": "<subModuleId>"
+}
+```
+
 - Validation:
-  - `id`: MongoId, must exist in DB
-- Success: `200` deleted confirmation
-- Errors:
-  - `400` validation errors
-  - `401`/`403` unauthorized
-  - `404` not found
-  - `500` unexpected server errors
+  - `id`: MongoId, must exist
+- Success: `200` deleted
+- Errors: `400` validation, `401`/`403`, `404` not found, `500`

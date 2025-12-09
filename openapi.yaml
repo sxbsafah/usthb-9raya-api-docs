@@ -2,12 +2,11 @@ openapi: 3.0.3
 info:
   title: USTHB Hub API
   version: 1.0.0
-  description: Minimal OpenAPI spec covering routers and endpoints.
 servers:
-  - url: https://api.example.com
-    description: Production
   - url: http://localhost:3000
     description: Local
+  - url: https://api.example.com
+    description: Production
 tags:
   - name: Authentication
   - name: Faculties
@@ -18,7 +17,7 @@ paths:
   /auth/:
     get:
       tags: [Authentication]
-      summary: Health for auth router
+      summary: Auth router health
       responses:
         "200": { description: OK }
   /auth/register:
@@ -372,9 +371,9 @@ paths:
   /contributions/resources/all:
     get:
       tags: [Contributions]
-      summary: List all resources
-      responses:
-        "200": { description: OK }
+    summary: List all resources
+    responses:
+      "200": { description: OK }
   /contributions/resources/user/{userId}:
     parameters:
       - in: path
